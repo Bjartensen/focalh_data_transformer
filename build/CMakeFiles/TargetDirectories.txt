@@ -1,4 +1,7 @@
 /home/bjartur/workspace/focalh_data_transformer/build/CMakeFiles/focalh_data_transformer.dir
 /home/bjartur/workspace/focalh_data_transformer/build/CMakeFiles/test_script.dir
+/home/bjartur/workspace/focalh_data_transformer/build/CMakeFiles/sim2gen.dir
+/home/bjartur/workspace/focalh_data_transformer/build/CMakeFiles/merge.dir
+/home/bjartur/workspace/focalh_data_transformer/build/CMakeFiles/triangular_merge.dir
 /home/bjartur/workspace/focalh_data_transformer/build/CMakeFiles/edit_cache.dir
 /home/bjartur/workspace/focalh_data_transformer/build/CMakeFiles/rebuild_cache.dir

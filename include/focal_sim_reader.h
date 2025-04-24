@@ -3,8 +3,8 @@
 
 #include <string>
 #include <memory.h>
-#include <TTree.h>
-#include <TFile.h>
+#include "TTree.h"
+#include "TFile.h"
 #include <TParameter.h>
 #include "definitions.h" // structs and hardcoded values
 
@@ -19,6 +19,7 @@ private:
   std::unique_ptr<TTree> out_ttree;
 
   std::string in_tfile_name;
+  std::string out_tfile_name;
 
   TFileFocalSim::EventPtr sim_event;
   TFileGeneric::EventPtr generic_event;
@@ -33,6 +34,7 @@ private:
   bool outfile_close();
   std::string out_filename(); // Based on sim file
   int get_energy();
+  void set_out_tfile_name(std::string name) {out_tfile_name = name;}
   void set_in_ttree_branches();
   void set_out_ttree_branches();
   void update_out_ttree_event();
@@ -42,6 +44,7 @@ private:
 public:
 
   FocalSimReader(std::string infile_name) : in_tfile_name(infile_name) {}
+  FocalSimReader(std::string infile_name, std::string outfile_name) : in_tfile_name(infile_name), out_tfile_name(outfile_name) {}
   bool to_generic_format();
 };
 

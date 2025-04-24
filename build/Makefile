@@ -142,6 +142,93 @@ test_script/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_script.dir/build.make CMakeFiles/test_script.dir/build
 .PHONY : test_script/fast
 
+#=============================================================================
+# Target rules for targets named sim2gen
+
+# Build rule for target.
+sim2gen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sim2gen
+.PHONY : sim2gen
+
+# fast build rule for target.
+sim2gen/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sim2gen.dir/build.make CMakeFiles/sim2gen.dir/build
+.PHONY : sim2gen/fast
+
+#=============================================================================
+# Target rules for targets named merge
+
+# Build rule for target.
+merge: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 merge
+.PHONY : merge
+
+# fast build rule for target.
+merge/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/merge.dir/build.make CMakeFiles/merge.dir/build
+.PHONY : merge/fast
+
+#=============================================================================
+# Target rules for targets named triangular_merge
+
+# Build rule for target.
+triangular_merge: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 triangular_merge
+.PHONY : triangular_merge
+
+# fast build rule for target.
+triangular_merge/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/triangular_merge.dir/build.make CMakeFiles/triangular_merge.dir/build
+.PHONY : triangular_merge/fast
+
+scripts/merge.o: scripts/merge.cxx.o
+.PHONY : scripts/merge.o
+
+# target to build an object file
+scripts/merge.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/merge.dir/build.make CMakeFiles/merge.dir/scripts/merge.cxx.o
+.PHONY : scripts/merge.cxx.o
+
+scripts/merge.i: scripts/merge.cxx.i
+.PHONY : scripts/merge.i
+
+# target to preprocess a source file
+scripts/merge.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/merge.dir/build.make CMakeFiles/merge.dir/scripts/merge.cxx.i
+.PHONY : scripts/merge.cxx.i
+
+scripts/merge.s: scripts/merge.cxx.s
+.PHONY : scripts/merge.s
+
+# target to generate assembly for a file
+scripts/merge.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/merge.dir/build.make CMakeFiles/merge.dir/scripts/merge.cxx.s
+.PHONY : scripts/merge.cxx.s
+
+scripts/sim2gen.o: scripts/sim2gen.cxx.o
+.PHONY : scripts/sim2gen.o
+
+# target to build an object file
+scripts/sim2gen.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sim2gen.dir/build.make CMakeFiles/sim2gen.dir/scripts/sim2gen.cxx.o
+.PHONY : scripts/sim2gen.cxx.o
+
+scripts/sim2gen.i: scripts/sim2gen.cxx.i
+.PHONY : scripts/sim2gen.i
+
+# target to preprocess a source file
+scripts/sim2gen.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sim2gen.dir/build.make CMakeFiles/sim2gen.dir/scripts/sim2gen.cxx.i
+.PHONY : scripts/sim2gen.cxx.i
+
+scripts/sim2gen.s: scripts/sim2gen.cxx.s
+.PHONY : scripts/sim2gen.s
+
+# target to generate assembly for a file
+scripts/sim2gen.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sim2gen.dir/build.make CMakeFiles/sim2gen.dir/scripts/sim2gen.cxx.s
+.PHONY : scripts/sim2gen.cxx.s
+
 scripts/test_script.o: scripts/test_script.cxx.o
 .PHONY : scripts/test_script.o
 
@@ -165,6 +252,30 @@ scripts/test_script.s: scripts/test_script.cxx.s
 scripts/test_script.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_script.dir/build.make CMakeFiles/test_script.dir/scripts/test_script.cxx.s
 .PHONY : scripts/test_script.cxx.s
+
+scripts/triangular_merge.o: scripts/triangular_merge.cxx.o
+.PHONY : scripts/triangular_merge.o
+
+# target to build an object file
+scripts/triangular_merge.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/triangular_merge.dir/build.make CMakeFiles/triangular_merge.dir/scripts/triangular_merge.cxx.o
+.PHONY : scripts/triangular_merge.cxx.o
+
+scripts/triangular_merge.i: scripts/triangular_merge.cxx.i
+.PHONY : scripts/triangular_merge.i
+
+# target to preprocess a source file
+scripts/triangular_merge.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/triangular_merge.dir/build.make CMakeFiles/triangular_merge.dir/scripts/triangular_merge.cxx.i
+.PHONY : scripts/triangular_merge.cxx.i
+
+scripts/triangular_merge.s: scripts/triangular_merge.cxx.s
+.PHONY : scripts/triangular_merge.s
+
+# target to generate assembly for a file
+scripts/triangular_merge.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/triangular_merge.dir/build.make CMakeFiles/triangular_merge.dir/scripts/triangular_merge.cxx.s
+.PHONY : scripts/triangular_merge.cxx.s
 
 src/focal_sim_reader.o: src/focal_sim_reader.cxx.o
 .PHONY : src/focal_sim_reader.o
@@ -223,10 +334,22 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... focalh_data_transformer"
+	@echo "... merge"
+	@echo "... sim2gen"
 	@echo "... test_script"
+	@echo "... triangular_merge"
+	@echo "... scripts/merge.o"
+	@echo "... scripts/merge.i"
+	@echo "... scripts/merge.s"
+	@echo "... scripts/sim2gen.o"
+	@echo "... scripts/sim2gen.i"
+	@echo "... scripts/sim2gen.s"
 	@echo "... scripts/test_script.o"
 	@echo "... scripts/test_script.i"
 	@echo "... scripts/test_script.s"
+	@echo "... scripts/triangular_merge.o"
+	@echo "... scripts/triangular_merge.i"
+	@echo "... scripts/triangular_merge.s"
 	@echo "... src/focal_sim_reader.o"
 	@echo "... src/focal_sim_reader.i"
 	@echo "... src/focal_sim_reader.s"

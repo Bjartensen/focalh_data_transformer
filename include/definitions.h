@@ -44,18 +44,23 @@ namespace TFileGeneric{
   const std::string label_branch = "labels";
   const std::string label_idx_branch = "label_indices";
   const std::string fractions_branch = "fractions";
+  const std::string energies_branch = "energies";
+  const std::string clusters_branch = "clusters";
+  const std::string cluster_idx_branch = "cluster_indices";
 
   struct EventPtr{
     std::vector<General::float_type> *x = nullptr;
     std::vector<General::float_type> *y = nullptr;
     std::vector<General::float_type> *value = nullptr;
+    std::vector<General::float_type> *energies = nullptr;
 
-    // Need flattened values
-    //std::vector<std::vector<General::float_type>> *label = nullptr;
-    // Really it should be contributions, labels and label indices
+    // Per cell flattened
     std::vector<unsigned int> *labels = nullptr; // Flattened
     std::vector<unsigned int> *label_idx = nullptr; // Index offsets
     std::vector<General::float_type> *fractions = nullptr; // Flattened
+
+    std::vector<unsigned int> *clusters = nullptr;
+    std::vector<unsigned int> *cluster_idx = nullptr;
   };
 }
 

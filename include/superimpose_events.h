@@ -56,6 +56,8 @@ public:
 
   void convert();
 
+  void triangular_augmentation();
+
 };
 
 

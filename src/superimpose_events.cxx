@@ -56,6 +56,7 @@ void SuperimposeEvents::set_in_ttrees_branches(){
     in_ttrees.at(i)->SetBranchAddress(TFileGeneric::label_branch.c_str(), &in_events.at(i).labels);
     in_ttrees.at(i)->SetBranchAddress(TFileGeneric::label_idx_branch.c_str(), &in_events.at(i).label_idx);
     in_ttrees.at(i)->SetBranchAddress(TFileGeneric::fractions_branch.c_str(), &in_events.at(i).fractions);
+    in_ttrees.at(i)->SetBranchAddress(TFileGeneric::energies_branch.c_str(), &in_events.at(i).energies);
   }
 }
 
@@ -66,6 +67,7 @@ void SuperimposeEvents::set_out_ttree_branches(){
   out_ttree->Branch(TFileGeneric::label_branch.c_str(), &out_event.labels);
   out_ttree->Branch(TFileGeneric::label_idx_branch.c_str(), &out_event.label_idx);
   out_ttree->Branch(TFileGeneric::fractions_branch.c_str(), &out_event.fractions);
+  out_ttree->Branch(TFileGeneric::energies_branch.c_str(), &out_event.energies);
 }
 
 
@@ -76,6 +78,7 @@ void SuperimposeEvents::clear_out_ttree_event(){
   out_event.labels->clear();
   out_event.label_idx->clear();
   out_event.fractions->clear();
+  out_event.energies->clear();
 }
 
 
@@ -83,6 +86,7 @@ void SuperimposeEvents::superimpose(int idx_event){
   read_in_entries(idx_event);
 
 
+  // Same coordinates
   *out_event.x = *in_events.at(0).x;
   *out_event.y = *in_events.at(0).y;
 
@@ -101,16 +105,6 @@ void SuperimposeEvents::superimpose(int idx_event){
     for (auto &v : values) sum+=v;
     ratios = contributions(values);
     
-    for (int j = 0; j < get_file_count(); j++){
-      std::cout << in_events.at(j).value->at(i) << ",";
-    }
-    for (int j = 0; j < ratios.second.size(); j++){
-      std::cout << ratios.second.at(j) << ",";
-    }
-    std::cout << std::endl;
-
-    // Push_back value
-
     out_event.label_idx->push_back(label_idx_counter);
     out_event.value->push_back(ratios.first);
     for (int j = 0; j < get_file_count(); j++){
@@ -121,6 +115,10 @@ void SuperimposeEvents::superimpose(int idx_event){
     
   }
 
+  // Adding energies. Assuming single particle events of 1 energy.
+  for (int j = 0; j < get_file_count(); j++){
+    out_event.energies->push_back(in_events.at(j).energies->at(0));
+  }
 }
 
 void SuperimposeEvents::convert(){
@@ -128,8 +126,6 @@ void SuperimposeEvents::convert(){
 
   outfile_open();
   set_out_ttree_branches();
-
-
 
   int entries = in_ttrees.at(0)->GetEntries();
   set_in_ttrees_branches();
@@ -139,8 +135,6 @@ void SuperimposeEvents::convert(){
     out_ttree->Fill();
     clear_out_ttree_event();
   }
-
-
 
   out_tfile->cd();
   out_tfile->Write();
@@ -156,11 +150,9 @@ void SuperimposeEvents::convert(){
 }
 
 
-
 void SuperimposeEvents::read_in_entries(int idx){
   for (auto &v : in_ttrees) v->GetEntry(idx);
 }
-
 
 
 std::pair<General::float_type, std::vector<General::float_type>> SuperimposeEvents::contributions(
@@ -180,4 +172,34 @@ std::pair<General::float_type, std::vector<General::float_type>> SuperimposeEven
   }
 
   return std::make_pair(sum, ratios);
+}
+
+
+
+// Bespoke function that combines events from a single file
+void SuperimposeEvents::triangular_augmentation(){
+  // Check only one attached input file
+  // Custom superimpose?
+
+
+  // Generate entries
+  //  1,2
+  //  1,3
+  //  ...
+  //  2,3
+  //  2,4
+  //  ...
+
+  // entries
+
+  for (int i = 0; i < 10 /*entries*/; i++){
+    for (int j = i+1; j < 10; j++){
+      // Moving window for more than 2 particles
+      std::cout << i << "," << j << std::endl;
+    }
+  }
+
+  // Call some superimpose-like function
+  // Takes entries as input
+
 }
