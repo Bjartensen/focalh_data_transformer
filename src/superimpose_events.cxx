@@ -85,7 +85,6 @@ void SuperimposeEvents::clear_out_ttree_event(){
 void SuperimposeEvents::superimpose(int idx_event){
   read_in_entries(idx_event);
 
-
   // Same coordinates
   *out_event.x = *in_events.at(0).x;
   *out_event.y = *in_events.at(0).y;
@@ -96,15 +95,13 @@ void SuperimposeEvents::superimpose(int idx_event){
   int channels = in_events.at(0).value->size();
   for (int i = 0; i < channels; i++){
     std::vector<General::float_type> values;
-    //
     std::pair<General::float_type, std::vector<General::float_type>> ratios;
+
     for (int j = 0; j < get_file_count(); j++){
       values.push_back(in_events.at(j).value->at(i));
     }
-    double sum = 0;
-    for (auto &v : values) sum+=v;
     ratios = contributions(values);
-    
+
     out_event.label_idx->push_back(label_idx_counter);
     out_event.value->push_back(ratios.first);
     for (int j = 0; j < get_file_count(); j++){
@@ -112,7 +109,6 @@ void SuperimposeEvents::superimpose(int idx_event){
       label_idx_counter++;
       out_event.fractions->push_back(ratios.second.at(j));
     }
-    
   }
 
   // Adding energies. Assuming single particle events of 1 energy.
@@ -127,8 +123,8 @@ void SuperimposeEvents::convert(){
   outfile_open();
   set_out_ttree_branches();
 
-  int entries = in_ttrees.at(0)->GetEntries();
   set_in_ttrees_branches();
+  int entries = in_ttrees.at(0)->GetEntries();
 
   for (int i = 0; i < entries; i++){
     superimpose(i);
@@ -159,6 +155,7 @@ std::pair<General::float_type, std::vector<General::float_type>> SuperimposeEven
     std::vector<General::float_type> &values
     ){
 
+
   General::float_type sum = 0;
   std::vector<General::float_type> ratios (values.size(),0);
   for (const auto &v: values) sum += v;
@@ -177,29 +174,127 @@ std::pair<General::float_type, std::vector<General::float_type>> SuperimposeEven
 
 
 // Bespoke function that combines events from a single file
-void SuperimposeEvents::triangular_augmentation(){
-  // Check only one attached input file
-  // Custom superimpose?
+void SuperimposeEvents::triangular_augmentation(int window, int max_events){
+
+  if (in_tfiles.size() != 1){
+    std::cout << "Expected only one input file." << std::endl;
+    return;
+  }
 
 
-  // Generate entries
-  //  1,2
-  //  1,3
-  //  ...
-  //  2,3
-  //  2,4
-  //  ...
+  outfile_open();
+  set_out_ttree_branches();
 
-  // entries
+  set_in_ttrees_branches();
+  int entries = in_ttrees.at(0)->GetEntries();
 
-  for (int i = 0; i < 10 /*entries*/; i++){
-    for (int j = i+1; j < 10; j++){
-      // Moving window for more than 2 particles
-      std::cout << i << "," << j << std::endl;
+  // Or do full permutation of n choose k, being aware of explosion and setting max
+  // randomly generate without generating everything before? Random select of indices?
+  
+  std::vector<std::vector<int>> indices_vec;
+
+
+  int count = 0;
+  for (int i = 0; i < entries; i++){
+    for (int j = i+1; j < entries; j++){
+      count++;
+      if (j+window - 1 > entries) break;
+      if (count > max_events) break;
+      std::vector<int> temp_vec;
+      temp_vec.push_back(i);
+      for (int k = j; k < j + window - 1; k++){
+        // Moving window for more than 2 particles
+        temp_vec.push_back(k);
+      }
+      indices_vec.push_back(temp_vec);
     }
   }
 
-  // Call some superimpose-like function
-  // Takes entries as input
+
+  for (int i = 0; i < indices_vec.size(); i++){
+    if (i%1000 == 0){
+      std::cout << "Mixing events ";
+      for (const auto &v : indices_vec.at(i)){
+        std::cout << v << ", ";
+      }
+      std::cout << " (event " << i << ")" << std::endl;
+    }
+    self_mix(indices_vec.at(i), window);
+    out_ttree->Fill();
+    clear_out_ttree_event();
+  }
+
+  out_tfile->cd();
+  out_tfile->Write();
+
+  // loop over infiles and close
+  if (!infiles_close()){
+    std::cout << "Couldn't close all in files." << std::endl;
+  }
+
+  if (!outfile_close()){
+    std::cout << "Couldn't close converted file." << std::endl;
+  }
+}
+
+void SuperimposeEvents::self_mix(std::vector<int> indices, int window){
+
+
+  // Construct containers
+  // fill containers with GetEntry
+
+  // To get coordinates
+  read_in_entries(0);
+
+  // Same coordinates
+  *out_event.x = *in_events.at(0).x;
+  *out_event.y = *in_events.at(0).y;
+  int channels = in_events.at(0).value->size();
+
+
+
+  // Across meaning they go across events, so not values
+  // in ONE event but across events
+  std::vector<std::vector<General::float_type>> values_across(
+      channels, std::vector<General::float_type>(window,0)
+  );
+  std::vector<General::float_type> energies_across(window, 0);
+
+
+  for (int i = 0; i < window; i++){
+    in_ttrees.at(0)->GetEntry(indices.at(i));
+    // TO-DO: Figure out when to use bounds checking and when not
+    values_across[i] = *in_events.at(0).value;
+    // Assuming single particle events with one energy
+    out_event.energies->push_back(in_events.at(0).energies->at(0));
+  }
+
+  // Add a index 0 into the flatten index holder
+  int label_idx_counter = 0;
+
+  for (int i = 0; i < channels; i++){
+    std::vector<General::float_type> values;
+    std::pair<General::float_type, std::vector<General::float_type>> ratios;
+
+    for (int j = 0; j < window; j++){
+      values.push_back(values_across.at(j).at(i));
+    }
+
+    ratios = contributions(values);
+
+    out_event.label_idx->push_back(label_idx_counter);
+    out_event.value->push_back(ratios.first);
+    for (int j = 0; j < window; j++){
+      out_event.labels->push_back(j+1);
+      label_idx_counter++;
+      out_event.fractions->push_back(ratios.second.at(j));
+    }
+
+  }
+
+  // Adding energies. Assuming single particle events of 1 energy.
+  for (int j = 0; j < get_file_count(); j++){
+    out_event.energies->push_back(in_events.at(j).energies->at(0));
+  }
 
 }
