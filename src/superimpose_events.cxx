@@ -1,4 +1,6 @@
 #include "superimpose_events.h"
+#include <random>
+#include <set>
 
 
 bool SuperimposeEvents::add_file(std::string in_filename){
@@ -194,6 +196,7 @@ void SuperimposeEvents::triangular_augmentation(int window, int max_events){
   std::vector<std::vector<int>> indices_vec;
 
 
+  // What does this do?
   int count = 0;
   for (int i = 0; i < entries; i++){
     for (int j = i+1; j < entries; j++){
@@ -219,7 +222,7 @@ void SuperimposeEvents::triangular_augmentation(int window, int max_events){
       }
       std::cout << " (event " << i << ")" << std::endl;
     }
-    self_mix(indices_vec.at(i), window);
+    self_mix(indices_vec.at(i));
     out_ttree->Fill();
     clear_out_ttree_event();
   }
@@ -237,8 +240,121 @@ void SuperimposeEvents::triangular_augmentation(int window, int max_events){
   }
 }
 
-void SuperimposeEvents::self_mix(std::vector<int> indices, int window){
 
+std::set<int> random_tuple(int length, int low, int high){
+  // Generate tuple of random number guaranteeing all are unique
+
+  if (high-low < length-1){
+    std::cout << "Cannot guarantee full unique list." << std::endl;
+    std::set<int> null;
+    return null;
+  }
+
+  // Random number engine
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dis(low, high);
+
+  std::set<int> int_set;
+  for (int k = 0; k < length; k++){
+    int_set.insert(dis(gen));
+  }
+
+  while(int_set.size() < length){
+    int r = dis(gen);
+    int_set.insert(r);
+  }
+  return int_set;
+}
+
+void add_subset(std::set<int> &subset, std::set<std::set<int>> &superset){
+  // Add a subset and warning if it failed
+  if(!superset.insert(subset).second){   
+    std::cout << "failed to insert ";
+    for (const auto v : subset) std::cout << v << ",";
+    if (superset.find(subset) != superset.end()){
+      std::cout << " tuple already exists." << std::endl;
+    }
+  }
+}
+
+void SuperimposeEvents::random_merge(int window, int max_events){
+
+  if (in_tfiles.size() != 1){
+    std::cout << "Expected only one input file." << std::endl;
+    return;
+  }
+
+  outfile_open();
+  set_out_ttree_branches();
+
+  set_in_ttrees_branches();
+  int entries = in_ttrees.at(0)->GetEntries();
+
+  std::vector<std::vector<int>> indices_vec;
+  std::set<std::set<int>> superset;
+
+  for (int i = 0; i < max_events; i++){
+    std::set<int> int_set = random_tuple(window, 0, entries);
+    add_subset(int_set, superset);
+  }
+
+  std::cout << "Superset length: " << superset.size() << std::endl;
+
+  // Pad remaining
+  int max_counter = 0;
+  int max_its = 10*max_events;
+  while(superset.size() < max_events){
+    std::set<int> int_set = random_tuple(window, 0, entries);
+    add_subset(int_set, superset);
+    max_counter++;
+    if (max_counter >= max_its){
+      std::cout << "STOPPED PADDING EXTRA EVENTS, TRIED " << max_counter << " TIMES" << std::endl;
+      break;
+    }
+  }
+  std::cout << "Padded " << max_counter << " times." << std::endl;
+  std::cout << "Superset length: " << superset.size() << std::endl;
+
+  for (const auto s : superset){
+    std::vector<int> subvector;
+    for (const auto ss : s) subvector.push_back(ss);
+    indices_vec.push_back(subvector);
+  }
+
+
+  // Keep the same
+  for (int i = 0; i < indices_vec.size(); i++){
+    if (i%1000 == 0){
+      std::cout << "Mixing events ";
+      for (const auto &v : indices_vec.at(i)){
+        std::cout << v << ", ";
+      }
+      std::cout << " (event " << i << ")" << std::endl;
+    }
+    self_mix(indices_vec.at(i));
+    out_ttree->Fill();
+    clear_out_ttree_event();
+  }
+
+  out_tfile->cd();
+  out_tfile->Write();
+
+  // loop over infiles and close
+  if (!infiles_close()){
+    std::cout << "Couldn't close all in files." << std::endl;
+  }
+
+  if (!outfile_close()){
+    std::cout << "Couldn't close converted file." << std::endl;
+  }
+}
+
+
+
+void SuperimposeEvents::self_mix(std::vector<int> indices){
+
+  int window = indices.size();
 
   // Construct containers
   // fill containers with GetEntry
@@ -266,7 +382,7 @@ void SuperimposeEvents::self_mix(std::vector<int> indices, int window){
     // TO-DO: Figure out when to use bounds checking and when not
     values_across[i] = *in_events.at(0).value;
     // Assuming single particle events with one energy
-    out_event.energies->push_back(in_events.at(0).energies->at(0));
+    //out_event.energies->push_back(in_events.at(0).energies->at(0));
   }
 
   // Add a index 0 into the flatten index holder

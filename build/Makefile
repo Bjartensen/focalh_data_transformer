@@ -181,6 +181,19 @@ triangular_merge/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/triangular_merge.dir/build.make CMakeFiles/triangular_merge.dir/build
 .PHONY : triangular_merge/fast
 
+#=============================================================================
+# Target rules for targets named random_merge
+
+# Build rule for target.
+random_merge: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 random_merge
+.PHONY : random_merge
+
+# fast build rule for target.
+random_merge/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_merge.dir/build.make CMakeFiles/random_merge.dir/build
+.PHONY : random_merge/fast
+
 scripts/merge.o: scripts/merge.cxx.o
 .PHONY : scripts/merge.o
 
@@ -204,6 +217,30 @@ scripts/merge.s: scripts/merge.cxx.s
 scripts/merge.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/merge.dir/build.make CMakeFiles/merge.dir/scripts/merge.cxx.s
 .PHONY : scripts/merge.cxx.s
+
+scripts/random_merge.o: scripts/random_merge.cxx.o
+.PHONY : scripts/random_merge.o
+
+# target to build an object file
+scripts/random_merge.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_merge.dir/build.make CMakeFiles/random_merge.dir/scripts/random_merge.cxx.o
+.PHONY : scripts/random_merge.cxx.o
+
+scripts/random_merge.i: scripts/random_merge.cxx.i
+.PHONY : scripts/random_merge.i
+
+# target to preprocess a source file
+scripts/random_merge.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_merge.dir/build.make CMakeFiles/random_merge.dir/scripts/random_merge.cxx.i
+.PHONY : scripts/random_merge.cxx.i
+
+scripts/random_merge.s: scripts/random_merge.cxx.s
+.PHONY : scripts/random_merge.s
+
+# target to generate assembly for a file
+scripts/random_merge.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_merge.dir/build.make CMakeFiles/random_merge.dir/scripts/random_merge.cxx.s
+.PHONY : scripts/random_merge.cxx.s
 
 scripts/sim2gen.o: scripts/sim2gen.cxx.o
 .PHONY : scripts/sim2gen.o
@@ -335,12 +372,16 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... focalh_data_transformer"
 	@echo "... merge"
+	@echo "... random_merge"
 	@echo "... sim2gen"
 	@echo "... test_script"
 	@echo "... triangular_merge"
 	@echo "... scripts/merge.o"
 	@echo "... scripts/merge.i"
 	@echo "... scripts/merge.s"
+	@echo "... scripts/random_merge.o"
+	@echo "... scripts/random_merge.i"
+	@echo "... scripts/random_merge.s"
 	@echo "... scripts/sim2gen.o"
 	@echo "... scripts/sim2gen.i"
 	@echo "... scripts/sim2gen.s"

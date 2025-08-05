@@ -31,9 +31,11 @@ add_executable(test_script                  ./scripts/test_script.cxx)
 add_executable(sim2gen                  ./scripts/sim2gen.cxx)
 add_executable(merge                  ./scripts/merge.cxx)
 add_executable(triangular_merge                  ./scripts/triangular_merge.cxx)
+add_executable(random_merge                  ./scripts/random_merge.cxx)
 
 target_link_libraries(test_script                     focalh_data_transformer)
 target_link_libraries(sim2gen                     focalh_data_transformer)
 target_link_libraries(merge                     focalh_data_transformer)
 target_link_libraries(triangular_merge                     focalh_data_transformer)
+target_link_libraries(random_merge                     focalh_data_transformer)
 

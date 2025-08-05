@@ -44,7 +44,7 @@ private:
       std::vector<General::float_type> &values
       );
 
-  void self_mix(std::vector<int> indices, int window);
+  void self_mix(std::vector<int> indices);
 
 public:
 
@@ -59,6 +59,7 @@ public:
   void convert();
 
   void triangular_augmentation(int window, int max_events);
+  void random_merge(int window, int max_events);
 
 };
 
