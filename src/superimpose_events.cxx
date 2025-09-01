@@ -322,6 +322,9 @@ void SuperimposeEvents::random_merge(int window, int max_events){
     indices_vec.push_back(subvector);
   }
 
+  // MAY STILL WANT TO RANDOMIZE SINCE THE SET ORDERS ITSELF
+  // https://stackoverflow.com/questions/6926433/how-to-shuffle-a-stdvector#6926473
+
 
   // Keep the same
   for (int i = 0; i < indices_vec.size(); i++){
@@ -382,7 +385,7 @@ void SuperimposeEvents::self_mix(std::vector<int> indices){
     // TO-DO: Figure out when to use bounds checking and when not
     values_across[i] = *in_events.at(0).value;
     // Assuming single particle events with one energy
-    //out_event.energies->push_back(in_events.at(0).energies->at(0));
+    out_event.energies->push_back(in_events.at(0).energies->at(0));
   }
 
   // Add a index 0 into the flatten index holder
@@ -409,8 +412,13 @@ void SuperimposeEvents::self_mix(std::vector<int> indices){
   }
 
   // Adding energies. Assuming single particle events of 1 energy.
-  for (int j = 0; j < get_file_count(); j++){
+  // Would rather just store all the energies
+  /*
+  std::cout << "Adding energies..." << std::endl;
+  for (int j = 0; j < indices.size(); j++){
+  //for (int j = 0; j < get_file_count(); j++){
     out_event.energies->push_back(in_events.at(j).energies->at(0));
   }
+  */
 
 }
